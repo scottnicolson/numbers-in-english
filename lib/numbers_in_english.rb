@@ -16,43 +16,39 @@ class NumbersInEnglish
   end
 
   def to_s
-    p deconstruct_number
     deconstruct_number.map do |number|
       self.class.scale.fetch number
-    end.join " "
+    end.join(" ").gsub(/hundred /, "hundred and ")
   end
 
-  def deconstruct_number(number = @number, magnitude = nil)
+  def deconstruct_number(number = @number)
     map = []
-    magnitude ||= calculate_magnitude(number)
+    magnitude = calculate_magnitude(number)
     if number < 20
       map << number
     else
       quotient, modulus = number.divmod(magnitude)
       if quotient > 0
-        case
-        when magnitude >= 1000
-          a = deconstruct_number(quotient)
-          map += a
-          map << magnitude
-        when magnitude > 10
-          map += [quotient , magnitude]
+        if magnitude >= 100
+          map += deconstruct_number(quotient)
+          map << magnitude unless magnitude == 10
         else
           map << quotient * magnitude
         end
       end
       if modulus < magnitude && !modulus.zero?
-        map << deconstruct_number(modulus, magnitude / 10)
+        map << deconstruct_number(modulus)
       end
     end
     map.flatten
   end
 
   def calculate_magnitude(number)
-    # 10 ** Math.log10(number).floor
-    if number > 1000
+    if number >= 1000000
+      1000000
+    elsif number >= 1000
       1000
-    elsif number > 100
+    elsif number >= 100
       100
     else
       10
