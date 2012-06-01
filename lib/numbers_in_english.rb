@@ -1,3 +1,5 @@
+class NumberOutOfBoundsError < RuntimeError; end
+
 class NumbersInEnglish
   
   def self.scale
@@ -16,6 +18,7 @@ class NumbersInEnglish
   end
 
   def to_s
+    raise NumberOutOfBoundsError, "Only support numbers less than 999,999,999" if @number > 999999999
     deconstruct_number.map do |number|
       self.class.scale.fetch number
     end.join(" ").gsub(/hundred /, "hundred and ")

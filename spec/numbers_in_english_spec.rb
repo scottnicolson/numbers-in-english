@@ -23,4 +23,7 @@ describe NumbersInEnglish do
     end
   end
 
+  it "should not handle numbers larger than 999,999,999" do
+    expect{NumbersInEnglish.new(1000000000000).to_s}.to raise_error(NumberOutOfBoundsError, "Only support numbers less than 999,999,999")
+  end
 end
